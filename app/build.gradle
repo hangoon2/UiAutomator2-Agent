@@ -46,9 +46,9 @@ android {
         abortOnError false
     }
     productFlavors {
-        e2eTest {
-            applicationId 'io.appium.uiautomator2.e2etest'
-        }
+        // e2eTest {
+        //     applicationId 'io.appium.uiautomator2.e2etest'
+        // }
         server {
             applicationId 'io.appium.uiautomator2.server'
         }
@@ -98,26 +98,26 @@ dependencies {
     androidTestImplementation 'junit:junit:4.12'
 }
 
-task installAUT(type: Exec) {
-    group = 'test'
-    description = 'Install app under test'
-    doFirst {
-        println('Install AUT')
-        def adb = "$System.env.ANDROID_HOME/platform-tools/adb"
-        def apk = file('../node_modules/android-apidemos/apks/ApiDemos-debug.apk')
-        def sdkVersion = "$adb shell getprop ro.build.version.sdk".execute().text.trim()
-        println "Device SDK version: $sdkVersion"
-        /* This seems weird but it is what it is: https://github.com/wix/detox/issues/274 */
-        def command = sdkVersion.toInteger() < 23 ? "$adb install -r $apk" : "$adb install -r -g $apk"
-        println "Execute command: $command"
-        commandLine command.split(' ')
-    }
-}
+// task installAUT(type: Exec) {
+//     group = 'test'
+//     description = 'Install app under test'
+//     doFirst {
+//         println('Install AUT')
+//         def adb = "$System.env.ANDROID_HOME/platform-tools/adb"
+//         def apk = file('../node_modules/android-apidemos/apks/ApiDemos-debug.apk')
+//         def sdkVersion = "$adb shell getprop ro.build.version.sdk".execute().text.trim()
+//         println "Device SDK version: $sdkVersion"
+//         /* This seems weird but it is what it is: https://github.com/wix/detox/issues/274 */
+//         def command = sdkVersion.toInteger() < 23 ? "$adb install -r $apk" : "$adb install -r -g $apk"
+//         println "Execute command: $command"
+//         commandLine command.split(' ')
+//     }
+// }
 
-afterEvaluate {
-    tasks.each { task ->
-        if (task.name.startsWith('connectedE2eTestDebugAndroidTest')) {
-            task.dependsOn installAUT
-        }
-    }
-}
+// afterEvaluate {
+//     tasks.each { task ->
+//         if (task.name.startsWith('connectedE2eTestDebugAndroidTest')) {
+//             task.dependsOn installAUT
+//         }
+//     }
+// }
