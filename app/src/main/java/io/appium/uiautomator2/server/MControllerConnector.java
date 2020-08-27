@@ -10,6 +10,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 
+import android.graphics.Point;
+import android.view.MotionEvent;
+
 import io.appium.uiautomator2.utils.Logger;
 import io.appium.uiautomator2.controller.DeviceManager;
 import io.appium.uiautomator2.server.LinkProtocol.Packet;
@@ -112,6 +115,7 @@ public class MControllerConnector {
         protocolThread.start();
 
         Packet packet = null;
+        Point pt = new Point();
 
         while( isConnected() ) {
             try {
@@ -149,17 +153,23 @@ public class MControllerConnector {
                     break;
 
                     case LinkProtocol.PACKET_TOUCH_DOWN: {
+                        pt.x = ByteBuffer.wrap(packet.data, 0, 2).getShort();
+                        pt.y = ByteBuffer.wrap(packet.data, 2, 2).getShort();
 
+                        DeviceManager.getInstance().touchDown(pt);
                     }
                     break;
 
                     case LinkProtocol.PACKET_TOUCH_MOVE: {
-
+                        
                     }
                     break;
 
                     case LinkProtocol.PACKET_TOUCH_UP: {
+                        pt.x = ByteBuffer.wrap(packet.data, 0, 2).getShort();
+                        pt.y = ByteBuffer.wrap(packet.data, 2, 2).getShort();
 
+                        DeviceManager.getInstance().touchMove(pt);
                     }
                     break;
                 }
