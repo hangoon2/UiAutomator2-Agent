@@ -1,0 +1,123 @@
+buildscript {
+    repositories {
+        jcenter()
+        google()
+        maven { url 'https://jitpack.io' }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.0.1'
+        classpath 'com.github.JakeWharton:sdk-manager-plugin:0ce4cdf08009d79223850a59959d9d6e774d0f77'
+        classpath 'de.mobilej.unmock:UnMockPlugin:0.6.4'
+    }
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'de.mobilej.unmock'
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId 'io.appium.uiautomator2'
+        minSdkVersion 21
+        targetSdkVersion 28
+        versionCode 67
+        archivesBaseName = 'appium-uiautomator2'
+        /**
+         * versionName should be updated and inline with version in package.json for every npm release.
+         */
+        versionName '4.12.2'
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+    }
+    buildTypes {
+        debug {
+            debuggable true
+        }
+        customDebuggableBuildType {
+            debuggable true
+        }
+        applicationVariants.all { variant ->
+            variant.outputs.all {
+                outputFileName = outputFileName.replace('debug.apk', "v${defaultConfig.versionName}.apk")
+            }
+        }
+    }
+    flavorDimensions 'default'
+    lintOptions {
+        abortOnError false
+    }
+    productFlavors {
+        e2eTest {
+            applicationId 'io.appium.uiautomator2.e2etest'
+        }
+        server {
+            applicationId 'io.appium.uiautomator2.server'
+        }
+    }
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+    packagingOptions {
+        exclude 'META-INF/maven/com.google.guava/guava/pom.properties'
+        exclude 'META-INF/maven/com.google.guava/guava/pom.xml'
+    }
+}
+
+unMock {
+    keepStartingWith 'com.android.internal.util.'
+    keepStartingWith 'android.util.'
+    keepStartingWith 'android.view.'
+    keepStartingWith 'android.internal.'
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'androidx.test.uiautomator:uiautomator:2.2.0'
+    implementation 'androidx.test:core:1.2.0'
+    implementation 'androidx.test:runner:1.2.0'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    //noinspection GradleDependency
+    implementation 'commons-io:commons-io:2.6'
+    implementation 'io.netty:netty-all:4.0.41.Final'
+    implementation 'jaxen:jaxen:1.2.0'
+    implementation 'net.gcardone.junidecode:junidecode:0.4.1'
+    implementation 'org.jdom:jdom2:2.0.6'
+    unmock 'org.robolectric:android-all:7.1.0_r7-robolectric-0'
+    testImplementation 'androidx.test.ext:junit:1.1.1'
+    //noinspection GradleDependency
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.json:json:20190722'
+    testImplementation 'org.powermock:powermock-api-mockito2:1.7.4'
+    testImplementation 'org.powermock:powermock-classloading-xstream:1.7.4'
+    testImplementation 'org.powermock:powermock-module-junit4-rule:1.7.4'
+    testImplementation 'org.powermock:powermock-module-junit4:1.7.4'
+    testImplementation 'org.robolectric:robolectric:4.3.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'com.squareup.okhttp:okhttp:2.7.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-web:3.2.0'
+    //noinspection GradleDependency
+    androidTestImplementation 'junit:junit:4.12'
+}
+
+task installAUT(type: Exec) {
+    group = 'test'
+    description = 'Install app under test'
+    doFirst {
+        println('Install AUT')
+        def adb = "$System.env.ANDROID_HOME/platform-tools/adb"
+        def apk = file('../node_modules/android-apidemos/apks/ApiDemos-debug.apk')
+        def sdkVersion = "$adb shell getprop ro.build.version.sdk".execute().text.trim()
+        println "Device SDK version: $sdkVersion"
+        /* This seems weird but it is what it is: https://github.com/wix/detox/issues/274 */
+        def command = sdkVersion.toInteger() < 23 ? "$adb install -r $apk" : "$adb install -r -g $apk"
+        println "Execute command: $command"
+        commandLine command.split(' ')
+    }
+}
+
+afterEvaluate {
+    tasks.each { task ->
+        if (task.name.startsWith('connectedE2eTestDebugAndroidTest')) {
+            task.dependsOn installAUT
+        }
+    }
+}
