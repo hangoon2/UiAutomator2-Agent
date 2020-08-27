@@ -208,7 +208,7 @@ public class ServerInstrumentation {
         serverThread.start();
 
         //client to wait for io.appium.uiautomator2.server to up
-        Logger.info("io.appium.uiautomator2.server started:");
+        Logger.info("io.appium.uiautomator2.server started:"); 
     }
 
     private void stopServerThread() {
@@ -233,30 +233,30 @@ public class ServerInstrumentation {
     }
 
     public void startMjpegServer() {
-        if (mjpegScreenshotServerThread != null && mjpegScreenshotServerThread.isAlive()) {
-            return;
-        }
+        // if (mjpegScreenshotServerThread != null && mjpegScreenshotServerThread.isAlive()) {
+        //     return;
+        // }
 
-        Logger.info("Starting MJPEG Server");
-        mjpegScreenshotServerThread = new MjpegScreenshotServer(mjpegServerPort);
-        mjpegScreenshotServerThread.start();
-        Logger.info("MJPEG Server started");
+        // Logger.info("Starting MJPEG Server");
+        // mjpegScreenshotServerThread = new MjpegScreenshotServer(mjpegServerPort);
+        // mjpegScreenshotServerThread.start();
+        // Logger.info("MJPEG Server started");
     }
 
     public void stopMjpegServer() {
-        if (mjpegScreenshotServerThread == null || !mjpegScreenshotServerThread.isAlive()) {
-            return;
-        }
+        // if (mjpegScreenshotServerThread == null || !mjpegScreenshotServerThread.isAlive()) {
+        //     return;
+        // }
 
-        Logger.info("Stopping MJPEG Server");
-        mjpegScreenshotServerThread.interrupt();
-        try {
-            mjpegScreenshotServerThread.join();
-        } catch (InterruptedException ignored) {
-            // swallow
-        }
-        mjpegScreenshotServerThread = null;
-        Logger.info("MJPEG Server stoppped");
+        // Logger.info("Stopping MJPEG Server");
+        // mjpegScreenshotServerThread.interrupt();
+        // try {
+        //     mjpegScreenshotServerThread.join();
+        // } catch (InterruptedException ignored) {
+        //     // swallow
+        // }
+        // mjpegScreenshotServerThread = null;
+        // Logger.info("MJPEG Server stoppped");
     }
 
     public static class PowerConnectionReceiver extends BroadcastReceiver {
@@ -317,12 +317,17 @@ public class ServerInstrumentation {
         private void startServer() {
             acquireWakeLock(MAX_TEST_DURATION);
 
-            server.start();
+//            server.start();
+            MControllerConnector.open();
 
             Logger.info("Started UiAutomator2 io.appium.uiautomator2.http io.appium.uiautomator2.server on port " + server.getPort());
+
+            getInstance().stopServer(); // 한번만 돌고 종료되도록 처리
         }
 
         public void stopLooping() {
+            MControllerConnector.close();
+
             if (looper == null) {
                 return;
             }

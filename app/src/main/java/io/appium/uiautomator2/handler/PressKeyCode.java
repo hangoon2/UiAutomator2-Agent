@@ -70,4 +70,9 @@ public class PressKeyCode extends SafeRequestHandler {
         return new AppiumResponse(getSessionId(request));
     }
 
+    public static void sendKeyEvent(int keyCode) {
+        Logger.info("CLICK HOME KEY");
+        getUiDevice().pressKeyCode(keyCode);
+    }
+
 }
