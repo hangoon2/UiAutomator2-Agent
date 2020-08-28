@@ -11,6 +11,8 @@ public class DeviceManager {
 
     private static DeviceManager device = null;
 
+    private ManualManager manualManager = null;
+
     private DeviceManager() {
 
     }
@@ -24,7 +26,8 @@ public class DeviceManager {
     }
 
     public void initialize() {
-
+        manualManager = new ManualManager();
+        manualManager.startTouchEventManager();
     }
 
     public void close() {
