@@ -17,11 +17,11 @@ apply plugin: 'de.mobilej.unmock'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId 'io.appium.uiautomator2'
+        applicationId 'com.onycom.uiautomator2'
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 67
-        archivesBaseName = 'appium-uiautomator2'
+        archivesBaseName = 'onycom-uiautomator2'
         /**
          * versionName should be updated and inline with version in package.json for every npm release.
          */
@@ -50,7 +50,7 @@ android {
         //     applicationId 'io.appium.uiautomator2.e2etest'
         // }
         server {
-            applicationId 'io.appium.uiautomator2.server'
+            applicationId 'com.onycom.uiautomator2.server'
         }
     }
     testOptions {
