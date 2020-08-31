@@ -84,9 +84,9 @@ public class DeviceManager {
 
     public void screenRotate(final boolean bLandScape) {
         if(bLandScape) {
-            CustomUiDevice.getInstance().setOrientationSync(ScreenOrientation.ROTATION_90);
+            CustomUiDevice.getInstance().setOrientation(ScreenOrientation.ROTATION_90);
         } else {
-            CustomUiDevice.getInstance().setOrientationSync(ScreenOrientation.ROTATION_0);
+            CustomUiDevice.getInstance().setOrientation(ScreenOrientation.ROTATION_0);
         }
     }
 

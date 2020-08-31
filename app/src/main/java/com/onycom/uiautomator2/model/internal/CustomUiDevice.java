@@ -206,4 +206,13 @@ public class CustomUiDevice {
         throw new InvalidElementStateException(String.format("Screen orientation cannot be changed to %s after %sms. " +
                 "Is it locked programmatically?", desired.toString(), CHANGE_ORIENTATION_TIMEOUT_MS));
     }
+
+    public boolean setOrientation(ScreenOrientation desired) {
+        if (ScreenOrientation.current() == desired) {
+            return true;
+        }
+
+        return getInstrumentation().getUiAutomation().setRotation(desired.ordinal());
+    }
+
 }
