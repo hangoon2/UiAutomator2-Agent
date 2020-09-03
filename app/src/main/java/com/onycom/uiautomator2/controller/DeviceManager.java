@@ -105,13 +105,13 @@ public class DeviceManager {
     public void sendKey(final int keyCode, final boolean bLong) {
         if(!controlMode) return;
 
-        manualManager.sendKey(keyCode, bLong);
+        manualManager.sendKey(3, true);
     }
 
     public void sendMotionEvent(final int type, final Point[] pt) {
         if(!controlMode) return;
 
-
+        manualManager.sendMotionEvent( type, pt, getUiDevice().getDisplayWidth(), getUiDevice().getDisplayHeight() );
     }
 
     public void swipe(final Point startPt, final Point endPt) {

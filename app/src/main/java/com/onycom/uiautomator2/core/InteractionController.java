@@ -65,6 +65,10 @@ public class InteractionController {
         return injectEventSync(event, true);
     }
 
+    public boolean injectEvent(final InputEvent event) throws UiAutomator2Exception {
+        return injectEventSync(event, false);
+    }
+
     public boolean shouldTrackScrollEvents() {
         final TrackScrollEvents trackScrollEventsSetting =
                 (TrackScrollEvents) Settings.TRACK_SCROLL_EVENTS.getSetting();
