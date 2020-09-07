@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.onycom.uiautomator2.controller.DeviceManager;
 import com.onycom.uiautomator2.utils.Logger;
 
 public class LinkProtocol implements Runnable {
