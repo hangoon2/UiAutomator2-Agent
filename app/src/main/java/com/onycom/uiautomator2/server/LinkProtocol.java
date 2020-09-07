@@ -188,9 +188,9 @@ public class LinkProtocol implements Runnable {
 					if(iPacketPos == PACKET_TAIL_SIZE) {
 						packet.time = System.currentTimeMillis();
 						if(packet.code == LinkProtocol.PACKET_PLAY_STOP) {
-//							DeviceManager.getInstance().setPlayStop(true);
+							DeviceManager.getInstance().setPlayStop(true);
 						} else {
-//							DeviceManager.getInstance().setPlayStop(false);
+							DeviceManager.getInstance().setPlayStop(false);
 							
 							packets.add(packet);
 						}
