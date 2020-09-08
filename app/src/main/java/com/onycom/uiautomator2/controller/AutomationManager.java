@@ -2,36 +2,22 @@ package com.onycom.uiautomator2.controller;
 
 import androidx.test.uiautomator.UiObject;
 
+import com.onycom.uiautomator2.model.AutomationInfo;
+
+import static com.onycom.uiautomator2.utils.Device.getUiDevice;
+
 public class AutomationManager {
 
-    public class UiObjectItem {
+    private static final int SCROLL_STEPS = 55;
 
-        public boolean bLongPress;
-        public boolean bWholeWord;
+    private final static short OBJECT_TYPE_TEXT = 0;
+    private final static short OBJECT_TYPE_DESCRIPTION = 1;
+    private final static short OBJECT_TYPE_CLASS = 2;
+//	private final static short OBJECT_TYPE_INDEX = 3;
 
-        public short scrollType;
-        public short scrollMaxCount;
-        public short scrollInstance;
-        public short objType;
-        public short objInstance;
-
-        public String scrollClass = null;
-        public String value = null;
-
-    }
-
-    public enum ScrollType {
-        None,
-        Vertical,
-        Horizontal,
-    }
-
-    public enum ObjectType {
-        Text,
-        Description,
-        Class,
-        Index,
-    }
+    private final static short SCROLL_TYPE_NONE = 0;
+    private final static short SCROLL_TYPE_VERTICAL = 1;
+//	final static short SCROLL_TYPE_HORIZONTAL = 2;
 
     private boolean bPlayStop = false;
 
@@ -43,11 +29,11 @@ public class AutomationManager {
         return null;
     }
 
-    public boolean searchObject(final UiObjectItem objItem) {
+    public boolean searchObject(final AutomationInfo info) {
         return false;
     }
 
-    public boolean selectObject(final UiObjectItem objItem) {
+    public boolean selectObject(final AutomationInfo info) {
         boolean ret = false;
 
         return ret;
@@ -57,7 +43,7 @@ public class AutomationManager {
         this.bPlayStop = bPlayStop;
     }
 
-    private UiObject findObject(final UiObjectItem objItem) {
+    private UiObject findObject(final AutomationInfo info) {
         return null;
     }
 
@@ -72,7 +58,7 @@ public class AutomationManager {
         return ret;
     }
 
-    private UiObject scrollIntoView(final UiObjectItem objItem) {
+    private UiObject scrollIntoView(final AutomationInfo info) {
         return null;
     }
 

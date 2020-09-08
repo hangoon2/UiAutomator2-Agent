@@ -17,7 +17,7 @@
 package com.onycom.uiautomator2.utils;
 
 public class Logger {
-    public static final String TAG = "appium";
+    public static final String TAG = "WTF";
 
     private static String getString(Object... args) {
         StringBuilder content = new StringBuilder();

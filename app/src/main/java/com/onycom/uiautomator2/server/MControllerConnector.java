@@ -10,7 +10,9 @@ import java.nio.ByteBuffer;
 import android.graphics.Point;
 import android.view.MotionEvent;
 
+import com.onycom.uiautomator2.controller.AutomationManager;
 import com.onycom.uiautomator2.controller.DeviceManager;
+import com.onycom.uiautomator2.model.AutomationInfo;
 import com.onycom.uiautomator2.utils.Logger;
 import com.onycom.uiautomator2.server.LinkProtocol.Packet;
 
@@ -59,7 +61,7 @@ public class MControllerConnector {
             Logger.info("MControllerConnector::connect() Accept OK");
             inputStream = new DataInputStream(clientSock.getInputStream());
             outStream = clientSock.getOutputStream();
-            
+
             DeviceManager.getInstance().initialize();
             setConnect(true);
 
@@ -250,12 +252,51 @@ public class MControllerConnector {
                     break;
 
                     case LinkProtocol.PACKET_TEST_SELECT_OBJECT: {
+                        AutomationInfo info = new AutomationInfo();
 
+                        if(packet.data[0] == 1) {
+                            info.bLongPress = true;
+                        } else {
+                            info.bLongPress = false;
+                        }
+
+                        if(packet.data[1] == 1) {
+                            info.bWholeWord = true;
+                        } else {
+                            info.bWholeWord = false;
+                        }
+
+                        info.scrollType = (short)packet.data[2];
+                        info.scrollMaxCount = (short)packet.data[3];
+                        info.scrollInstance = ByteBuffer.wrap(packet.data, 4, 2).getShort();
+                        int length = (int)ByteBuffer.wrap(packet.data, 6, 2).getShort();
+                        if(length > 0) {
+                            info.scrollClass = new String(packet.data, 8, length);
+                        }
+                        info.objType = (short)packet.data[8 + length];
+                        info.objInstance = ByteBuffer.wrap(packet.data, 8 + length + 1, 2).getShort();
+                        int valueLength = packet.dataSize - (length + 11);
+
+                        sendResponse( DeviceManager.getInstance().selectObject(info) );
                     }
                     break;
 
                     case LinkProtocol.PACKET_TEST_SEARCH_OBJECT: {
+                        AutomationInfo info = new AutomationInfo();
 
+                        info.scrollType = (short)packet.data[0];
+                        info.scrollMaxCount = (short)packet.data[1];
+                        info.scrollInstance = ByteBuffer.wrap(packet.data, 2, 2).getShort();
+                        int length = (int)ByteBuffer.wrap(packet.data, 4, 2).getShort();
+                        if(length > 0) {
+                            info.scrollClass = new String(packet.data, 6, length);
+                        }
+                        info.objType = (short)packet.data[6+length];
+                        info.objInstance = ByteBuffer.wrap(packet.data, 6+length+1, 2).getShort();
+                        int valueLength = packet.dataSize - (length + 9);
+                        info.value = new String(packet.data, length + 9, valueLength);
+
+                        sendResponse( DeviceManager.getInstance().searchObject(info) );
                     }
                     break;
                 }
@@ -320,6 +361,26 @@ public class MControllerConnector {
             DeviceManager.getInstance().close();
             
             connector = null;
+        }
+    }
+
+    private void sendResponse(boolean bSuccess) {
+        byte[] data = new byte[1];
+        if(bSuccess) {
+            data[0] = 0;
+        } else {
+            data[0] = 1;
+        }
+
+        byte[] buff = LinkProtocol.makeMessage(0, LinkProtocol.PACKET_COMMON_RESPONSE, 1, data);
+        if(outStream != null) {
+            try {
+                outStream.write(buff);
+                outStream.flush();
+                Logger.info("Send Response : " + bSuccess);
+            } catch(IOException e) {
+                Logger.info( "MControllerConnector::sendResponse() IOException - " + e.getMessage() );
+            }
         }
     }
 
