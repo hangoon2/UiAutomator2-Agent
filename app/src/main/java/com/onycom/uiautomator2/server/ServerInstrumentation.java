@@ -50,10 +50,10 @@ public class ServerInstrumentation {
     private static ServerInstrumentation instance;
 
     private final PowerManager powerManager;
-    private final int serverPort;
-    private final int mjpegServerPort;
+//    private final int serverPort;
+//    private final int mjpegServerPort;
     private UiAutomatorServerThread serverThread;
-    private MjpegScreenshotServer mjpegScreenshotServerThread;
+//    private MjpegScreenshotServer mjpegScreenshotServerThread;
     private PowerManager.WakeLock wakeLock;
     private long wakeLockAcquireTimestampMs = 0;
     private long wakeLockTimeoutMs = 0;
@@ -77,31 +77,31 @@ public class ServerInstrumentation {
     }
 
     private ServerInstrumentation(Context context, int serverPort, int mjpegServerPort) {
-        if (isValidPort(serverPort)) {
-            this.serverPort = serverPort;
-        } else {
-            Logger.warn(String.format(
-                "The server port is out of valid range [%s;%s]: %s -- using default: %s",
-                MIN_PORT,
-                MAX_PORT,
-                serverPort,
-                ServerConfig.DEFAULT_SERVER_PORT
-            ));
-            this.serverPort = ServerConfig.DEFAULT_SERVER_PORT;
-        }
-
-        if (isValidPort(mjpegServerPort)) {
-            this.mjpegServerPort = mjpegServerPort;
-        } else {
-            Logger.warn(String.format(
-                "The MJPEG server port is out of valid range [%s;%s]: %s -- using default: %s",
-                MIN_PORT,
-                MAX_PORT,
-                mjpegServerPort,
-                ServerConfig.DEFAULT_MJPEG_SERVER_PORT
-            ));
-            this.mjpegServerPort = ServerConfig.DEFAULT_MJPEG_SERVER_PORT;
-        }
+//        if (isValidPort(serverPort)) {
+//            this.serverPort = serverPort;
+//        } else {
+//            Logger.warn(String.format(
+//                "The server port is out of valid range [%s;%s]: %s -- using default: %s",
+//                MIN_PORT,
+//                MAX_PORT,
+//                serverPort,
+//                ServerConfig.DEFAULT_SERVER_PORT
+//            ));
+//            this.serverPort = ServerConfig.DEFAULT_SERVER_PORT;
+//        }
+//
+//        if (isValidPort(mjpegServerPort)) {
+//            this.mjpegServerPort = mjpegServerPort;
+//        } else {
+//            Logger.warn(String.format(
+//                "The MJPEG server port is out of valid range [%s;%s]: %s -- using default: %s",
+//                MIN_PORT,
+//                MAX_PORT,
+//                mjpegServerPort,
+//                ServerConfig.DEFAULT_MJPEG_SERVER_PORT
+//            ));
+//            this.mjpegServerPort = ServerConfig.DEFAULT_MJPEG_SERVER_PORT;
+//        }
 
         this.powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
 
@@ -319,7 +319,7 @@ public class ServerInstrumentation {
 //            server.start();
             MControllerConnector.open();    // 내부적으로 무한 루프 상태
 
-            ServerInstrumentation.getInstance().stopServer(); // 한번만 돌고 종료되도록 처리
+            ServerInstrumentation.getInstance().stopServer();
         }
 
         public void stopLooping() {

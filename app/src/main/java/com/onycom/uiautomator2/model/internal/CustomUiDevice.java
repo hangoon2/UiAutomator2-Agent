@@ -208,10 +208,6 @@ public class CustomUiDevice {
     }
 
     public boolean setOrientation(ScreenOrientation desired) {
-        if (ScreenOrientation.current() == desired) {
-            return true;
-        }
-
         return getInstrumentation().getUiAutomation().setRotation(desired.ordinal());
     }
 
