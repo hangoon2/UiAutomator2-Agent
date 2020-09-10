@@ -49,8 +49,6 @@ public class AutomationManager {
             dir.mkdirs();
         }
 
-        boolean ret = getUiDevice().takeScreenshot( new File(dumpDir + "/scene.png") );
-
         final File file = new File(filePath);
         if( file.exists() ) {
             // 기존 파일이 존재하면 삭제한다.
@@ -84,9 +82,7 @@ public class AutomationManager {
     public boolean selectObject(final AutomationInfo info) {
         boolean ret = false;
 
-        Logger.info("SelectObject : " + info.value + ", " + info.bLongPress + ", " + info.bWholeWord + ", " + info.objInstance);
         final UiObject object = findObject(info);
-        Logger.info("Select Object2 : " + object);
         if( object != null && object.exists() ) {
             try {
                 if(info.bLongPress) {
@@ -101,7 +97,6 @@ public class AutomationManager {
             }
         }
 
-        Logger.info("Select Object Result : " + ret);
         return ret;
     }
 

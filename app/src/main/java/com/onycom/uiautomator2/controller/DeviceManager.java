@@ -10,7 +10,6 @@ import android.view.accessibility.AccessibilityNodeInfo;
 
 import com.onycom.uiautomator2.model.AppiumUIA2Driver;
 import com.onycom.uiautomator2.model.AutomationInfo;
-import com.onycom.uiautomator2.model.NotificationListener;
 import com.onycom.uiautomator2.model.ScreenOrientation;
 import com.onycom.uiautomator2.model.internal.CustomUiDevice;
 import com.onycom.uiautomator2.utils.Logger;
@@ -71,8 +70,6 @@ public class DeviceManager {
 
         manualManager.startTouchEventManager();
 
-//        NotificationListener.getInstance().start();
-
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             originalListener = com.onycom.uiautomator2.core.UiAutomation.getInstance().getOnAccessibilityEventListener();
 
@@ -82,8 +79,6 @@ public class DeviceManager {
 
     public void close() {
         manualManager.close();
-
-        NotificationListener.getInstance().stop();
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2 && originalListener != null) {
             Logger.info("OnAccessibilityEventListener Initialize ........");
