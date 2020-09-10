@@ -92,7 +92,8 @@ public class AccessibilityNodeInfoDumper {
     private void addDisplayInfo() throws IOException {
         Display display = UiAutomatorBridge.getInstance().getDefaultDisplay();
         Point size = new Point();
-        display.getSize(size);
+//        display.getSize(size);
+        display.getRealSize(size);
         serializer.attribute(NAMESPACE, "rotation", Integer.toString(display.getRotation()));
         serializer.attribute(NAMESPACE, "width", Integer.toString(size.x));
         serializer.attribute(NAMESPACE, "height", Integer.toString(size.y));

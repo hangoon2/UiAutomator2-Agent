@@ -23,7 +23,7 @@ public class UiAutomator2Server {
      */
     @Test
     public void startServer() {
-        // dump 파일등을 저장하기 위한 외부 스토리지 저장 권한 요
+        // dump 파일등을 저장하기 위한 외부 스토리지 저장 권한 요청
         ServerInstrumentation.request(Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
         if (serverInstrumentation == null) {

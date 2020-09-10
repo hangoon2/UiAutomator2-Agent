@@ -17,10 +17,12 @@ package com.onycom.uiautomator2.core;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Range;
+import android.view.Display;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.accessibility.AccessibilityNodeInfo.AccessibilityAction;
 
@@ -95,8 +97,14 @@ public class AccessibilityNodeInfoHelpers {
             return rect;
         }
 
-        UiDevice uiDevice = Device.getUiDevice();
-        Rect screenRect = new Rect(0, 0, uiDevice.getDisplayWidth(), uiDevice.getDisplayHeight());
+//        UiDevice uiDevice = Device.getUiDevice();
+//        Rect screenRect = new Rect(0, 0, uiDevice.getDisplayWidth(), uiDevice.getDisplayHeight());
+
+        Display display = UiAutomatorBridge.getInstance().getDefaultDisplay();
+        Point size = new Point();
+        display.getRealSize(size);
+        Rect screenRect = new Rect(0, 0, size.x, size.y);
+
         return getBounds(node, screenRect, 0);
     }
 

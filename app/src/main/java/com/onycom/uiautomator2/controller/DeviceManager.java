@@ -3,11 +3,15 @@ package com.onycom.uiautomator2.controller;
 import android.annotation.TargetApi;
 import android.app.UiAutomation;
 import android.content.ComponentName;
+import android.content.Context;
 import android.graphics.Point;
+import android.hardware.display.DisplayManager;
 import android.os.Build;
+import android.view.Display;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
+import com.onycom.uiautomator2.core.UiAutomatorBridge;
 import com.onycom.uiautomator2.model.AppiumUIA2Driver;
 import com.onycom.uiautomator2.model.AutomationInfo;
 import com.onycom.uiautomator2.model.ScreenOrientation;
@@ -20,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 import static com.onycom.uiautomator2.utils.Device.getUiDevice;
+
+import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 
 public class DeviceManager {
 
@@ -61,7 +67,10 @@ public class DeviceManager {
 
         CustomUiDevice.getInstance().setOrientationSync(ScreenOrientation.ROTATION_0);
         Logger.info( "초기화 이후 디바이스 현재 회전 상태 : " + getUiDevice().getDisplayRotation() );
-        if( getUiDevice().getDisplayWidth() >= getUiDevice().getDisplayHeight() ) {
+
+        Point pt = DeviceManager.deviceSize();
+        Logger.info("Device Size : " + pt.x + ", " + pt.y);
+        if(pt.x >= pt.y) {
             bDefaultLandscape = true;
         }
 
@@ -358,6 +367,15 @@ public class DeviceManager {
                 originalListener.onAccessibilityEvent(event);
             }
         }
+    }
+
+    public static Point deviceSize() {
+        Point size = new Point();
+
+        Display display = UiAutomatorBridge.getInstance().getDefaultDisplay();
+        display.getRealSize(size);
+
+        return size;
     }
 
 }

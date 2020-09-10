@@ -66,13 +66,13 @@ public class ManualManager {
         final PointerCoords[] pointerCoords = new PointerCoords[pt.length];
 
         for(int i = 0; i < pt.length; i++) {
-//            if(pt[i].x < 0 || pt[i].x > width) {
-//                break;
-//            }
-//
-//            if(pt[i].y < 0 || pt[i].y > height) {
-//                break;
-//            }
+            if(pt[i].x < 0 || pt[i].x > width) {
+                break;
+            }
+
+            if(pt[i].y < 0 || pt[i].y > height) {
+                break;
+            }
 
             final PointerCoords touch = new PointerCoords();
             touch.x = pt[i].x;
