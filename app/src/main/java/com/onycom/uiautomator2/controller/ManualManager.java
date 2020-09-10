@@ -11,6 +11,7 @@ import android.os.Looper;
 import android.os.RemoteException;
 import android.os.SystemClock;
 import android.view.InputDevice;
+import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.MotionEvent.PointerProperties;
@@ -195,7 +196,7 @@ public class ManualManager {
                 Logger.info( "DeviceManager::sendKey RemoteException - " + e.getMessage() );
             }
         } else {
-            sendKeyEvent(keyCode, bLong);
+            sendKeyEvent(keyCode, true);
         }
     }
 
@@ -210,58 +211,58 @@ public class ManualManager {
     }
 
     private void keyLongPress(final int keyCode) {
-//        Logger.info("Long Press Key : " + keyCode);
-//        final long downTime = SystemClock.uptimeMillis();
-//        UiAutomatorBridge.getInstance().getInteractionController().injectEvent(new KeyEvent(downTime, downTime,
-//                KeyEvent.ACTION_DOWN, keyCode, 0, 0, KeyCharacterMap.VIRTUAL_KEYBOARD,
-//                0, 0, InputDevice.SOURCE_KEYBOARD));
-//        UiAutomatorBridge.getInstance().getInteractionController().injectEvent(new KeyEvent(downTime, downTime,
-//                KeyEvent.ACTION_DOWN, keyCode, 1, 0, KeyCharacterMap.VIRTUAL_KEYBOARD,
-//                0, KeyEvent.FLAG_LONG_PRESS, InputDevice.SOURCE_KEYBOARD));
-//        UiAutomatorBridge.getInstance().getInteractionController().injectEvent(new KeyEvent(downTime, downTime,
-//                KeyEvent.ACTION_UP, keyCode, 0, 0, KeyCharacterMap.VIRTUAL_KEYBOARD,
-//                0, 0, InputDevice.SOURCE_KEYBOARD));
+        Logger.info("Long Press Key : " + keyCode);
+        final long downTime = SystemClock.uptimeMillis();
+        UiAutomatorBridge.getInstance().getInteractionController().injectEvent(new KeyEvent(downTime, downTime,
+                KeyEvent.ACTION_DOWN, keyCode, 0, 0, KeyCharacterMap.VIRTUAL_KEYBOARD,
+                0, 0, InputDevice.SOURCE_KEYBOARD));
+        UiAutomatorBridge.getInstance().getInteractionController().injectEvent(new KeyEvent(downTime, downTime,
+                KeyEvent.ACTION_DOWN, keyCode, 1, 0, KeyCharacterMap.VIRTUAL_KEYBOARD,
+                0, KeyEvent.FLAG_LONG_PRESS, InputDevice.SOURCE_KEYBOARD));
+        UiAutomatorBridge.getInstance().getInteractionController().injectEvent(new KeyEvent(downTime, downTime,
+                KeyEvent.ACTION_UP, keyCode, 0, 0, KeyCharacterMap.VIRTUAL_KEYBOARD,
+                0, 0, InputDevice.SOURCE_KEYBOARD));
 
-        final KeyEvent keyEvent = new KeyEvent(KeyEvent.ACTION_DOWN, keyCode);
-        final Thread task = new Thread(new Runnable() {
-            private Handler handler;
-
-            @Override
-            public void run() {
-                Looper.prepare();
-                handler = new Handler();
-                handler.post(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        UiAutomatorBridge.getInstance().getInteractionController().injectEvent(keyEvent);
-
-                        for (int i = 0; i < COUNT_OF_LONGEVENT; i++) {
-                            final KeyEvent newEvent = KeyEvent
-                                    .changeTimeRepeat(keyEvent,
-                                            SystemClock.uptimeMillis(), i,
-                                            keyEvent.getFlags()
-                                                    | KeyEvent.FLAG_LONG_PRESS);
-
-                            UiAutomatorBridge.getInstance().getInteractionController().injectEvent(newEvent);
-
-                            try {
-                                Thread.sleep(5);
-                            } catch (final InterruptedException e) {
-                                // error
-                                Logger.info("ManualManager::keyLongPress() InterruptedException - " + e.getMessage());
-                            }
-                        }
-
-                        UiAutomatorBridge.getInstance().getInteractionController().injectEvent(new KeyEvent(KeyEvent.ACTION_UP, keyEvent.getKeyCode()));
-                    }
-                });
-
-                Looper.loop();
-            }
-        });
-
-        task.start();
+//        final KeyEvent keyEvent = new KeyEvent(KeyEvent.ACTION_DOWN, keyCode);
+//        final Thread task = new Thread(new Runnable() {
+//            private Handler handler;
+//
+//            @Override
+//            public void run() {
+//                Looper.prepare();
+//                handler = new Handler();
+//                handler.post(new Runnable() {
+//
+//                    @Override
+//                    public void run() {
+//                        UiAutomatorBridge.getInstance().getInteractionController().injectEvent(keyEvent);
+//
+//                        for (int i = 0; i < COUNT_OF_LONGEVENT; i++) {
+//                            final KeyEvent newEvent = KeyEvent
+//                                    .changeTimeRepeat(keyEvent,
+//                                            SystemClock.uptimeMillis(), i,
+//                                            keyEvent.getFlags()
+//                                                    | KeyEvent.FLAG_LONG_PRESS);
+//
+//                            UiAutomatorBridge.getInstance().getInteractionController().injectEvent(newEvent);
+//
+//                            try {
+//                                Thread.sleep(5);
+//                            } catch (final InterruptedException e) {
+//                                // error
+//                                Logger.info("ManualManager::keyLongPress() InterruptedException - " + e.getMessage());
+//                            }
+//                        }
+//
+//                        UiAutomatorBridge.getInstance().getInteractionController().injectEvent(new KeyEvent(KeyEvent.ACTION_UP, keyEvent.getKeyCode()));
+//                    }
+//                });
+//
+//                Looper.loop();
+//            }
+//        });
+//
+//        task.start();
     }
 
     public void goHome() {
@@ -279,9 +280,9 @@ public class ManualManager {
 
     public void cancelPowerOff() {
         // sendKeyEvent(KEYCODE_HOME, false); 가 동작안함
-        String cmd = "input keyevent 4";
         try {
-            Runtime.getRuntime().exec(cmd);
+            String cmd = "input keyevent 4";
+            getUiDevice().executeShellCommand(cmd);
         } catch (IOException e) {
             Logger.info( "ManualManager::cancelPowerOff IOException - " + e.getMessage() );
         }
