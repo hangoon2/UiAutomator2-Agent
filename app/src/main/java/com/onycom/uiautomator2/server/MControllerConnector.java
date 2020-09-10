@@ -1,6 +1,7 @@
 package com.onycom.uiautomator2.server;
 
 import java.io.DataInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.ServerSocket;
@@ -8,6 +9,7 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 
 import android.graphics.Point;
+import android.os.Environment;
 import android.view.MotionEvent;
 
 import com.onycom.uiautomator2.controller.AutomationManager;
@@ -245,9 +247,12 @@ public class MControllerConnector {
 
                     case LinkProtocol.PACKET_TEST_HIERARCHY_DUMP: {
                         String filePath = DeviceManager.getInstance().dumpHierarchyData("scene.xml");
+                        Logger.info("MControllerConnect dump file ..... : " + filePath);
 
-                        byte[] data = filePath.getBytes();
-                        sendResponse(data, data.length);
+                        if(filePath != null) {
+                            byte[] data = filePath.getBytes();
+                            sendResponse(data, data.length);
+                        }
                     }
                     break;
 
@@ -276,6 +281,8 @@ public class MControllerConnector {
                         info.objType = (short)packet.data[8 + length];
                         info.objInstance = ByteBuffer.wrap(packet.data, 8 + length + 1, 2).getShort();
                         int valueLength = packet.dataSize - (length + 11);
+                        info.value = new String(packet.data, length + 11, valueLength);
+                        Logger.info("Select Object Packet : " + valueLength);
 
                         sendResponse( DeviceManager.getInstance().selectObject(info) );
                     }

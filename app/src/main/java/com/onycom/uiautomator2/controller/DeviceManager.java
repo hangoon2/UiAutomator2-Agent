@@ -8,13 +8,17 @@ import android.os.Build;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
+import com.onycom.uiautomator2.model.AppiumUIA2Driver;
 import com.onycom.uiautomator2.model.AutomationInfo;
+import com.onycom.uiautomator2.model.NotificationListener;
 import com.onycom.uiautomator2.model.ScreenOrientation;
 import com.onycom.uiautomator2.model.internal.CustomUiDevice;
 import com.onycom.uiautomator2.utils.Logger;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.onycom.uiautomator2.utils.Device.getUiDevice;
 
@@ -39,7 +43,9 @@ public class DeviceManager {
     private boolean controlMode = true;
 
     private DeviceManager() {
-
+        // 화면 정보 덤프를 위해 빈 capabilities를 전달하여 Session을 생성한다.
+        Map<String, Object> capabilities = new HashMap<String, Object>();
+        AppiumUIA2Driver.getInstance().initializeSession(capabilities);
     }
 
     public static DeviceManager getInstance() {
@@ -65,6 +71,8 @@ public class DeviceManager {
 
         manualManager.startTouchEventManager();
 
+//        NotificationListener.getInstance().start();
+
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             originalListener = com.onycom.uiautomator2.core.UiAutomation.getInstance().getOnAccessibilityEventListener();
 
@@ -74,6 +82,8 @@ public class DeviceManager {
 
     public void close() {
         manualManager.close();
+
+        NotificationListener.getInstance().stop();
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2 && originalListener != null) {
             Logger.info("OnAccessibilityEventListener Initialize ........");
@@ -200,7 +210,7 @@ public class DeviceManager {
         boolean ret = false;
 
         List<AccessibilityNodeInfo> exceptions = root.findAccessibilityNodeInfosByText("Google 앱 업데이트");
-        if( exceptions != null && exceptions.isEmpty() ) {
+        if( exceptions != null && !exceptions.isEmpty() ) {
             return false;
         }
 
@@ -215,6 +225,10 @@ public class DeviceManager {
             popups = root.findAccessibilityNodeInfosByText("보안 업데이트 사용 가능");
         }
 
+        if( popups == null || popups.isEmpty() ) {
+            popups = root.findAccessibilityNodeInfosByText("시스템 업데이트");
+        }
+
         if( popups != null && popups.isEmpty() == false ) {
             List<AccessibilityNodeInfo> buttons = new ArrayList<AccessibilityNodeInfo>();
 
@@ -223,6 +237,7 @@ public class DeviceManager {
             findCancelButton(root, "지금 설치", buttons);
             findCancelButton(root, "업데이트", buttons);
             findCancelButton(root, "지금 다시 시작", buttons);
+            findCancelButton(root, "다운로드 및 설치", buttons);
 
             if( buttons.isEmpty() == false ) {
                 ret = true;

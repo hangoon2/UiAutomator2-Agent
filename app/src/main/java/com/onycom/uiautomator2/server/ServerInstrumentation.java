@@ -26,6 +26,7 @@ import android.os.PowerManager;
 import android.os.SystemClock;
 
 import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.rule.GrantPermissionRule;
 import androidx.test.uiautomator.Configurator;
 
 import com.onycom.uiautomator2.server.mjpeg.MjpegScreenshotServer;
@@ -51,7 +52,7 @@ public class ServerInstrumentation {
     private final PowerManager powerManager;
     private final int serverPort;
     private final int mjpegServerPort;
-    private HttpdThread serverThread;
+    private UiAutomatorServerThread serverThread;
     private MjpegScreenshotServer mjpegScreenshotServerThread;
     private PowerManager.WakeLock wakeLock;
     private long wakeLockAcquireTimestampMs = 0;
@@ -200,15 +201,14 @@ public class ServerInstrumentation {
         }
 
         if (serverThread != null) {
-            Logger.error("Stopping UiAutomator2 io.appium.uiautomator2.http io.appium.uiautomator2.server");
+            Logger.error("Stopping UiAutomator2 com.onycom.uiautomator2.server");
             stopServer();
         }
 
-        serverThread = new HttpdThread(this.serverPort);
+        serverThread = new UiAutomatorServerThread();
         serverThread.start();
 
-        //client to wait for io.appium.uiautomator2.server to up
-        Logger.info("io.appium.uiautomator2.server started:"); 
+        Logger.info("Start com.onycom.uiautomator2.server");
     }
 
     private void stopServerThread() {
@@ -221,7 +221,7 @@ public class ServerInstrumentation {
             return;
         }
 
-        Logger.info("Stopping uiautomator2 io.appium.uiautomator2.http io.appium.uiautomator2.server");
+        Logger.info("Stopping com.onycom.uiautomator2.server");
         serverThread.stopLooping();
         serverThread.interrupt();
         try {
@@ -232,32 +232,32 @@ public class ServerInstrumentation {
         isServerStopped = true;
     }
 
-    public void startMjpegServer() {
-        // if (mjpegScreenshotServerThread != null && mjpegScreenshotServerThread.isAlive()) {
-        //     return;
-        // }
-
-        // Logger.info("Starting MJPEG Server");
-        // mjpegScreenshotServerThread = new MjpegScreenshotServer(mjpegServerPort);
-        // mjpegScreenshotServerThread.start();
-        // Logger.info("MJPEG Server started");
-    }
-
-    public void stopMjpegServer() {
-        // if (mjpegScreenshotServerThread == null || !mjpegScreenshotServerThread.isAlive()) {
-        //     return;
-        // }
-
-        // Logger.info("Stopping MJPEG Server");
-        // mjpegScreenshotServerThread.interrupt();
-        // try {
-        //     mjpegScreenshotServerThread.join();
-        // } catch (InterruptedException ignored) {
-        //     // swallow
-        // }
-        // mjpegScreenshotServerThread = null;
-        // Logger.info("MJPEG Server stoppped");
-    }
+//    public void startMjpegServer() {
+//        // if (mjpegScreenshotServerThread != null && mjpegScreenshotServerThread.isAlive()) {
+//        //     return;
+//        // }
+//
+//        // Logger.info("Starting MJPEG Server");
+//        // mjpegScreenshotServerThread = new MjpegScreenshotServer(mjpegServerPort);
+//        // mjpegScreenshotServerThread.start();
+//        // Logger.info("MJPEG Server started");
+//    }
+//
+//    public void stopMjpegServer() {
+//        // if (mjpegScreenshotServerThread == null || !mjpegScreenshotServerThread.isAlive()) {
+//        //     return;
+//        // }
+//
+//        // Logger.info("Stopping MJPEG Server");
+//        // mjpegScreenshotServerThread.interrupt();
+//        // try {
+//        //     mjpegScreenshotServerThread.join();
+//        // } catch (InterruptedException ignored) {
+//        //     // swallow
+//        // }
+//        // mjpegScreenshotServerThread = null;
+//        // Logger.info("MJPEG Server stoppped");
+//    }
 
     public static class PowerConnectionReceiver extends BroadcastReceiver {
         @Override
@@ -282,18 +282,17 @@ public class ServerInstrumentation {
             }
 
             Logger.info("The device was disconnected from power source. Shutting down the server.");
-            getInstance().stopMjpegServer();
+//            getInstance().stopMjpegServer();
             getInstance().stopServer();
         }
     }
 
-    private class HttpdThread extends Thread {
-        private final AndroidServer server;
+    private class UiAutomatorServerThread extends Thread {
+//        private final AndroidServer server;
         private Looper looper;
 
-        public HttpdThread(int serverPort) {
-            // Create the io.appium.uiautomator2.server but absolutely do not start it here
-            server = new AndroidServer(serverPort);
+        public UiAutomatorServerThread() {
+//            server = new AndroidServer(serverPort);
         }
 
         @Override
@@ -306,23 +305,21 @@ public class ServerInstrumentation {
 
         @Override
         public void interrupt() {
-            server.stop();
+//            server.stop();
             super.interrupt();
         }
 
-        public AndroidServer getServer() {
-            return server;
-        }
+//        public AndroidServer getServer() {
+//            return server;
+//        }
 
         private void startServer() {
             acquireWakeLock(MAX_TEST_DURATION);
 
 //            server.start();
-            MControllerConnector.open();
+            MControllerConnector.open();    // 내부적으로 무한 루프 상태
 
-            Logger.info("Started UiAutomator2 io.appium.uiautomator2.http io.appium.uiautomator2.server on port " + server.getPort());
-
-            getInstance().stopServer(); // 한번만 돌고 종료되도록 처리
+            ServerInstrumentation.getInstance().stopServer(); // 한번만 돌고 종료되도록 처리
         }
 
         public void stopLooping() {
@@ -334,4 +331,23 @@ public class ServerInstrumentation {
             looper.quit();
         }
     }
+
+    public static void request(String... permissions) {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            UiAutomation auto = InstrumentationRegistry.getInstrumentation().getUiAutomation();
+            String cmd = "pm grant " + InstrumentationRegistry.getInstrumentation().getTargetContext().getPackageName() + " %1$s";
+            String cmdTest = "pm grant " + InstrumentationRegistry.getInstrumentation().getContext().getPackageName() + " %1$s";
+            for (String perm : permissions) {
+                execute(String.format(cmd, perm), auto);
+                execute(String.format(cmdTest, perm), auto);
+            }
+
+            GrantPermissionRule.grant(permissions);
+        }
+    }
+
+    private static void execute(String currCmd, UiAutomation auto){
+        auto.executeShellCommand(currCmd);
+    }
+
 }

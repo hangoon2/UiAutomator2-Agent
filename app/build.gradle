@@ -46,9 +46,9 @@ android {
         abortOnError false
     }
     productFlavors {
-        // e2eTest {
-        //     applicationId 'io.appium.uiautomator2.e2etest'
-        // }
+         e2eTest {
+             applicationId 'com.onycom.uiautomator2.e2etest'
+         }
         server {
             applicationId 'com.onycom.uiautomator2.server'
         }
@@ -74,6 +74,7 @@ dependencies {
     implementation 'androidx.test.uiautomator:uiautomator:2.2.0'
     implementation 'androidx.test:core:1.2.0'
     implementation 'androidx.test:runner:1.2.0'
+    implementation 'androidx.test:rules:1.2.0'
     implementation 'com.google.code.gson:gson:2.8.6'
     //noinspection GradleDependency
     implementation 'commons-io:commons-io:2.6'
