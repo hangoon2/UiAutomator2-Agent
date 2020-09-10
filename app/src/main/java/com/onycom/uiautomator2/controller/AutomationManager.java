@@ -1,5 +1,6 @@
 package com.onycom.uiautomator2.controller;
 
+import android.os.Build;
 import android.os.Environment;
 
 import androidx.test.uiautomator.UiObject;
@@ -40,8 +41,13 @@ public class AutomationManager {
     }
 
     public String dumpHierarchyData(final String fileName) {
-        final String dataDir = Environment.getExternalStorageDirectory().getAbsolutePath();
-        final String dumpDir = dataDir + "/local/tmp";
+        String externalDir = Environment.getExternalStorageDirectory().getAbsolutePath();
+        if(Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP ||
+            Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP_MR1) {
+            externalDir = "/sdcard";
+        }
+        Logger.info("External Storage Directory : " + externalDir);
+        final String dumpDir = externalDir + "/local/tmp";
         final String filePath = dumpDir + "/" + fileName;
         final File dir = new File(dumpDir);
         if( dir.exists() == false ) {
