@@ -3,9 +3,7 @@ package com.onycom.uiautomator2.controller;
 import android.annotation.TargetApi;
 import android.app.UiAutomation;
 import android.content.ComponentName;
-import android.content.Context;
 import android.graphics.Point;
-import android.hardware.display.DisplayManager;
 import android.os.Build;
 import android.view.Display;
 import android.view.accessibility.AccessibilityEvent;
@@ -24,8 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.onycom.uiautomator2.utils.Device.getUiDevice;
-
-import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 
 public class DeviceManager {
 
@@ -69,7 +65,6 @@ public class DeviceManager {
         Logger.info( "초기화 이후 디바이스 현재 회전 상태 : " + getUiDevice().getDisplayRotation() );
 
         Point pt = DeviceManager.deviceSize();
-        Logger.info("Device Size : " + pt.x + ", " + pt.y);
         if(pt.x >= pt.y) {
             bDefaultLandscape = true;
         }
@@ -90,7 +85,6 @@ public class DeviceManager {
         manualManager.close();
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2 && originalListener != null) {
-            Logger.info("OnAccessibilityEventListener Initialize ........");
             com.onycom.uiautomator2.core.UiAutomation.getInstance().setOnAccessibilityEventListener(originalListener);
         }
     }

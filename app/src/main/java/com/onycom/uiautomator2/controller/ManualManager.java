@@ -24,7 +24,7 @@ import static com.onycom.uiautomator2.utils.Device.getUiDevice;
 
 public class ManualManager {
 
-    private static final int COUNT_OF_LONGEVENT = 50;
+//    private static final int COUNT_OF_LONGEVENT = 50;
     private static final int SPEED_OF_SWIPE = 5;
 
     private static final int KEYCODE_HOME = 3;
@@ -196,7 +196,7 @@ public class ManualManager {
                 Logger.info( "DeviceManager::sendKey RemoteException - " + e.getMessage() );
             }
         } else {
-            sendKeyEvent(keyCode, true);
+            sendKeyEvent(keyCode, bLong);
         }
     }
 

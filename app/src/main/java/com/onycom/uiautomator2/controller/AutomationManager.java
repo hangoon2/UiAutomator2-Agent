@@ -13,9 +13,7 @@ import com.onycom.uiautomator2.model.AutomationInfo;
 import com.onycom.uiautomator2.utils.Logger;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 
 import static com.onycom.uiautomator2.utils.Device.getUiDevice;

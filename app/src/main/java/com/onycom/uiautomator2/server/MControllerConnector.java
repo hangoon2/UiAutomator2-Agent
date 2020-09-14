@@ -129,7 +129,7 @@ public class MControllerConnector {
 
             packet = protocol.getPacket();
             if(packet != null) {
-                Logger.info("MControllerConnector::run Receive Data - " + packet.code);
+//                Logger.info("MControllerConnector::run Receive Data - " + packet.code);
 
                 switch(packet.code) {
                     case LinkProtocol.PACKET_START: {
@@ -177,11 +177,14 @@ public class MControllerConnector {
                     break;
 
                     case LinkProtocol.PACKET_TOUCH_MOVE: {
-                        //  테스트 코드 이후 수정 필요 : 4개의 좌표 처리를 하도록
-                        pt.x = ByteBuffer.wrap(packet.data, 0, 2).getShort();
-                        pt.y = ByteBuffer.wrap(packet.data, 2, 2).getShort();
+                        int touchCnt = packet.dataSize / 4;
 
-                        DeviceManager.getInstance().touchMove(pt);
+                        for(int i = 0; i < touchCnt; i++) {
+                            pt.x = ByteBuffer.wrap(packet.data, 4 * i, 2).getShort();
+                            pt.y = ByteBuffer.wrap(packet.data, 4* i + 2, 2).getShort();
+
+                            DeviceManager.getInstance().touchMove(pt);
+                        }
                     }
                     break;
 
